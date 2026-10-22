@@ -1,0 +1,9 @@
+name: astrbot_plugin_lively_comic
+display_name: 每日群聊漫畫
+desc: 每天把群聊畫成群漫畫（基於群分析插件），主人審核後發群；主人可以讓機器人畫畫
+version: 2.0.0
+author: GUCine
+repo: https://github.com/GUCine/astrbot_plugin_lively_comic
+support_platforms:
+  - aiocqhttp
+astrbot_version: ">=4.29.0"

@@ -1,0 +1,42 @@
+{
+  "groups": {
+    "description": "能畫群漫畫的群",
+    "type": "list",
+    "hint": "留空 = 門禁插件裡服務的所有群，預設都開；每個群可以在面板裡或私信「群漫畫 關 群號」單獨關",
+    "default": []
+  },
+  "comic_at": {
+    "description": "每天幾點畫群漫畫",
+    "type": "string",
+    "hint": "24 小時制 HH:MM（北京時間）",
+    "default": "22:00"
+  },
+  "draw_daily_max": {
+    "description": "主人每天最多讓畫幾張圖",
+    "type": "int",
+    "default": 20
+  },
+  "keep_image_days": {
+    "description": "畫好的圖保留幾天",
+    "type": "int",
+    "hint": "過期自動刪除（還在等審核的不刪）",
+    "default": 14
+  },
+  "self_look": {
+    "description": "機器人出鏡時的外觀描述（英文提示詞）",
+    "type": "text",
+    "hint": "主人讓畫「你自己」時加在提示詞前面，例如 The main character is a cute chibi cat girl with ...。留空 = 不額外描述長相",
+    "default": ""
+  },
+  "self_ref_image": {
+    "description": "機器人出鏡時的參考圖",
+    "type": "string",
+    "hint": "圖片路徑，絕對路徑或相對 AstrBot 的 data 目錄，例如 plugin_data/astrbot_plugin_qq_group_daily_analysis/reference_images/me.jpg。留空不帶參考圖",
+    "default": ""
+  },
+  "owner_qq": {
+    "description": "主人 QQ（留空用門禁插件裡填的）",
+    "type": "list",
+    "default": []
+  }
+}
