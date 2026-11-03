@@ -1,4 +1,4 @@
-{
+﻿{
   "groups": {
     "description": "能畫群漫畫的群",
     "type": "list",
@@ -6,15 +6,52 @@
     "default": []
   },
   "comic_at": {
-    "description": "每天幾點畫群漫畫",
+    "description": "每天幾點發群漫畫",
     "type": "string",
-    "hint": "24 小時制 HH:MM（北京時間）",
+    "hint": "24 小時制 HH:MM（北京時間）。到點前 comic_prep_min 分鐘就開始取話題、畫，畫好看好了等到這個時間一起發",
     "default": "22:00"
   },
-  "draw_daily_max": {
-    "description": "主人每天最多讓畫幾張圖",
+  "comic_prep_min": {
+    "description": "提前幾分鐘開始取話題（第一段）",
     "type": "int",
+    "hint": "每天那輪分三段：到點前這麼多分鐘各群一起取話題；拿到話題就畫第一張；畫好給〈我〉看，要改就改，到點發。改一次要再畫一張（2～4 分鐘），留得越多越來得及改，但這之後群裡聊的就畫不進去了",
+    "default": 30
+  },
+  "comic_parallel": {
+    "description": "同時畫幾個群",
+    "type": "int",
+    "hint": "每天那輪同時取話題、畫圖的群數；她看圖、等到點發不佔名額",
+    "default": 3
+  },
+  "comic_topic_tries": {
+    "description": "取不到話題最多試幾次",
+    "type": "int",
+    "hint": "群分析插件的模型超時之類取不到話題時，隔一分鐘再試",
+    "default": 3
+  },
+  "comic_draw_min": {
+    "description": "最晚提前幾分鐘開始畫第一張（第二段）",
+    "type": "int",
+    "hint": "取不到話題隔一分鐘再試，最晚試到這時候；拿到話題就馬上畫，不等到這時候",
     "default": 20
+  },
+  "draw_daily_max": {
+    "description": "每天最多讓畫幾張圖",
+    "type": "int",
+    "hint": "所有人加起來，說說配圖也算在裡面；面板上可以選 10／20／30／50／100，後端收 0～200",
+    "default": 20
+  },
+  "draw_chat": {
+    "description": "聊天裡畫圖（lively_draw）",
+    "type": "bool",
+    "hint": "關掉後誰都叫不了她在聊天裡畫圖（群漫畫、說說配圖不受影響）；面板值班頁能撥",
+    "default": true
+  },
+  "draw_min_score": {
+    "description": "好感度到多少能叫〈我〉畫圖",
+    "type": "float",
+    "hint": "主人不看這個；畫圖用的是 GPT 的模型，露骨的畫面會被審核擋掉",
+    "default": 70
   },
   "keep_image_days": {
     "description": "畫好的圖保留幾天",
@@ -38,5 +75,97 @@
     "description": "主人 QQ（留空用門禁插件裡填的）",
     "type": "list",
     "default": []
+  },
+  "storyboard_provider_id": {
+    "description": "写群漫画分镜的模型",
+    "type": "string",
+    "_special": "select_provider",
+    "hint": "用〈我〉的人格挑今天值得画的事、写台词和每个人的样子。留空用 AstrBot 当前默认的模型",
+    "default": ""
+  },
+  "fallback_storyboard_provider_id": {
+    "description": "群漫畫分鏡的備用模型",
+    "type": "string",
+    "_special": "select_provider",
+    "hint": "上面那個出錯（斷線、限額、超時）時改用這個；留空不換",
+    "default": ""
+  },
+  "comic_look": {
+    "description": "每天那張群漫畫畫好先給〈我〉看",
+    "type": "bool",
+    "hint": "開：〈我〉看過再決定發不發、跟圖配什麼話；沒發的把圖和原因私信〈主人〉，之後〈主人〉私聊或那個群裡還能發。〈我〉沒看成（模型出錯）就照以前直接發。關：畫好直接發群",
+    "default": true
+  },
+  "comic_lane_max": {
+    "description": "群漫畫：每把生圖 key 同時最多畫幾張",
+    "type": "int",
+    "hint": "每把 key 是一條通道（群分析插件設定裡那把，加上 server/mac/set_draw_keys.py 另外存的），幾張圖分給最空的那條；都滿了就等。同一把 key 同時太多張容易卡超時",
+    "default": 3
+  },
+  "comic_fix_max": {
+    "description": "〈我〉看了想改，每張最多改幾次",
+    "type": "int",
+    "hint": "她看了哪格不對可以修圖（在這張上只改她說的地方）或重畫（改分鏡整張重畫），改好再給她看一遍；到點前改好就換，沒改好就照她對原來那張的判斷。每改一次要再畫一張圖、照樣扣錢。每張各算各的；0 是不改",
+    "default": 2
+  },
+  "comic_redo_max": {
+    "description": "主人請〈我〉補畫群漫畫，一天最多幾張",
+    "type": "int",
+    "hint": "工具 lively_comic_redo（只有主人在的聊天裡有）：照每天那張的做法取話題、她寫分鏡和名字牌，畫好給她看、能改，看完就發到那個群。每張都要畫圖、照樣扣錢；她看了要改的另算在「每個群最多改幾次」裡。沒畫出圖的（取不到話題之類）不算。0 是不給補畫",
+    "default": 2
+  },
+  "comic_redo_min": {
+    "description": "補畫那張最晚改到開始後幾分鐘",
+    "type": "int",
+    "hint": "補畫的不等到點，她看完就發；她看了想改，從開始算過了這麼多分鐘還沒改好，就照原樣發出去",
+    "default": 20
+  },
+  "look_provider_id": {
+    "description": "看群漫畫的模型",
+    "type": "string",
+    "_special": "select_provider",
+    "hint": "要認得圖（模型設定的模態裡有 image）。留空用寫分鏡的模型",
+    "default": ""
+  },
+  "comic_size": {
+    "description": "群漫画的尺寸",
+    "type": "string",
+    "hint": "竖着的格子漫画，默认 1024x1536（2:3）。画图服务不支持就改回 1024x1024",
+    "default": "1024x1536"
+  },
+  "comic_panels_min": {
+    "description": "群漫画一张最少几格",
+    "type": "int",
+    "default": 3
+  },
+  "comic_panels_max": {
+    "description": "群漫画一张最多几格",
+    "type": "int",
+    "hint": "一件事画一张四格漫画（顶上标题、格子从上往下排），几格〈我〉自己定，在这个范围里",
+    "default": 4
+  },
+  "comic_strips_max": {
+    "description": "一個群一天最多畫幾件事",
+    "type": "int",
+    "hint": "一件事一張；畫幾件〈我〉從當天的話題裡挑，不超過這個數，還要趕得上到點（群漫畫不算進每天的張數上限，10-31）",
+    "default": 6
+  },
+  "comic_vertical_bubbles": {
+    "description": "對白氣泡直排",
+    "type": "bool",
+    "hint": "照四格漫畫的樣子，氣泡裡的字從上往下寫；畫圖模型寫直排中文較容易寫錯字，錯得多就關掉",
+    "default": true
+  },
+  "comic_owner_look": {
+    "description": "群漫画里主人的样子",
+    "type": "string",
+    "hint": "英文，例如 messy black hair, navy hoodie, glasses；留空就每次由分镜定（都画成年轻群友，不画成长辈）。头上标主人的群名片",
+    "default": ""
+  },
+  "comic_cast_max": {
+    "description": "群漫画最多标几个人",
+    "type": "int",
+    "hint": "话题里的人在前，再按今天说话多少补；名字用〈我〉给 TA 起的称呼，和主人撞名的换回群名片",
+    "default": 10
   }
 }
